@@ -1,0 +1,10 @@
+{
+  "name": "briefit",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "imapflow": "^1.0.164",
+    "mailparser": "^3.7.1"
+  }
+}

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Briefit — your morning, sorted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#EEF5FC; --card:#FFFFFF; --ink:#14293D; --sub:#5E7284; --dim:#9DB0C0; --line:#E2ECF4;
+    --coral:#2E8FE6; --coral-d:#1B6FC0; --coral-bg:#E4F1FC;
+    --violet:#7C5CFF; --violet-d:#5B3FB0; --violet-bg:#EFEAFF;
+    --green:#12A06A; --green-d:#0E7D53; --green-bg:#E4F6EE;
+    --red:#E5484D; --red-bg:#FDECEC; --amber:#E0930A; --amber-bg:#FCF0DA;
+    --disp:"Poppins",system-ui,sans-serif; --sans:"Inter",system-ui,sans-serif; --mono:ui-monospace,Menlo,monospace;
+    --g1:#8FD3FF; --g2:#3E9BF0;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{background:#DEEAF4;color:var(--ink);font-family:var(--sans);font-size:16px;-webkit-font-smoothing:antialiased}
+  .app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 0 80px -20px rgba(30,80,140,.25)}
+  :focus-visible{outline:2px solid var(--coral);outline-offset:2px;border-radius:8px}
+  .hero{background:linear-gradient(160deg,var(--g1),var(--g2));color:#fff;padding:18px 20px 30px;transition:padding .3s}
+  .hrow{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+  .hrow .date{opacity:.95;font-weight:500}
+  .icons{display:flex;gap:8px;align-items:center}
+  .ico{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:14px;border:0;color:#fff;cursor:pointer}
+  .swrap{display:flex;align-items:center;gap:7px;font-size:12px;color:#fff}
+  .switch{width:38px;height:22px;border-radius:20px;background:rgba(255,255,255,.3);position:relative;cursor:pointer;border:1px solid rgba(255,255,255,.5)}
+  .switch b{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .18s}
+  .switch[aria-checked="true"]{background:rgba(255,255,255,.55)} .switch[aria-checked="true"] b{left:18px}
+  .greet{font-family:var(--disp);font-weight:700;font-size:27px;line-height:1.12;margin-top:16px}
+  .subline{font-size:13.5px;opacity:.96;margin-top:8px;min-height:19px}
+  .tabs{display:flex;gap:16px;margin-top:18px;font-size:13px;font-weight:600;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{opacity:.8;padding-bottom:6px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;background:none;border-top:0;border-left:0;border-right:0;color:#fff;font:inherit}
+  .tab.on{opacity:1;border-bottom-color:#fff}
+  .sheet{margin-top:-16px;background:var(--bg);border-radius:22px 22px 0 0;padding:18px 16px 120px;position:relative;min-height:60vh}
+  .modewrap{display:flex;gap:8px;margin-bottom:14px}
+  .mchip{font-size:13px;font-weight:600;color:var(--sub);background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer}
+  .mchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .paste{margin-bottom:14px} .paste[hidden]{display:none}
+  textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px;font-family:var(--mono);font-size:12px;line-height:1.55;color:#5a4c3f;resize:vertical;outline:none}
+  .seclabel{display:flex;align-items:center;gap:8px;margin:16px 2px 10px}
+  .seclabel .cd{width:9px;height:9px;border-radius:50%} .seclabel span{font-family:var(--disp);font-weight:600;font-size:15px}
+  .seclabel.red .cd{background:var(--red)} .seclabel.green .cd{background:var(--green)} .seclabel.amber .cd{background:var(--amber)}
+  .card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 18px -14px rgba(30,80,140,.55);opacity:0;transform:translateY(6px);transition:.32s}
+  .card.in{opacity:1;transform:none} .card.gone{opacity:.45}
+  .card .r1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .card .ttl{font-weight:600;font-size:14.5px;color:var(--ink)} .card .meta{font-size:12.5px;color:var(--sub);margin-top:2px;line-height:1.4}
+  .pill{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap}
+  .p-spon{color:var(--coral-d);background:var(--coral-bg)} .p-collab{color:var(--violet-d);background:var(--violet-bg)}
+  .p-inv{color:var(--green-d);background:var(--green-bg)} .p-spam{color:#992d2d;background:var(--red-bg)} .p-other{color:var(--sub);background:#F2EAE3}
+  .chips{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .chip{font-size:12px;font-weight:600;padding:7px 14px;border-radius:20px;border:0;cursor:pointer}
+  .chip.primary{color:#fff;background:var(--coral)} .chip.ghost{color:var(--sub);background:#F3EBE4}
+  .flatcard{background:var(--card);border-radius:16px;padding:13px 14px;margin-bottom:10px;box-shadow:0 8px 18px -14px rgba(30,80,140,.55)}
+  .flatcard .li{font-size:13.5px;color:var(--ink);padding:5px 0;display:flex;gap:8px;align-items:flex-start}
+  .flatcard .li i{font-style:normal}
+  .listwrap{margin-top:18px} .listwrap h3{font-family:var(--disp);font-weight:600;font-size:14px;color:var(--sub);margin:0 0 10px}
+  .msg{background:#fff;border-radius:14px;padding:12px 13px;margin-bottom:8px;box-shadow:0 6px 14px -14px rgba(30,80,140,.5)}
+  .msg .r1{display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .msg .who{font-weight:600;font-size:14px;color:var(--ink)} .msg .sm{font-size:12.5px;color:var(--sub);margin-top:3px}
+  .askbar{position:sticky;bottom:14px;margin:16px 4px 0;background:#fff;border:1px solid var(--line);border-radius:24px;padding:6px 6px 6px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 14px 30px -16px rgba(30,80,140,.6)}
+  .askbar .lbl{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--sub)}
+  .askbar select{font:inherit;font-size:13.5px;font-weight:700;color:var(--ink);border:0;background:#F3EBE4;border-radius:9px;padding:5px 8px;cursor:pointer}
+  .go{width:44px;height:44px;border-radius:50%;background:var(--coral);color:#fff;border:0;display:grid;place-items:center;font-size:19px;cursor:pointer;flex:none}
+  .go[disabled]{opacity:.6}
+  #status{font-size:12.5px;color:var(--sub);margin:10px 2px 0;min-height:16px} #status.err{color:#b12b2b}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);border-top-color:var(--coral);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .empty{color:var(--dim);text-align:center;font-size:13.5px;padding:30px 0}
+  @media (prefers-reduced-motion:reduce){.card{transition:none} .spin{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero" id="hero">
+    <div class="hrow">
+      <span class="date" id="date">📅 —</span>
+      <div class="icons">
+        <div class="swrap"><span>Demo</span><div class="switch" id="demo" role="switch" aria-checked="true" tabindex="0" aria-label="Demo mode"><b></b></div></div>
+      </div>
+    </div>
+    <div class="greet" id="greet">Good morning 👋</div>
+    <div class="subline" id="subline">Brief your inbox to see what needs you today.</div>
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-key="all">All</button>
+      <button class="tab" data-key="Sponsorship Offer">Sponsors</button>
+      <button class="tab" data-key="Collab Request">Collabs</button>
+      <button class="tab" data-key="Invoice/Payment">Invoices</button>
+      <button class="tab" data-key="Spam/Low-value">Noise</button>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <div class="modewrap">
+      <button class="mchip on" id="m-gmail">Fetch inbox</button>
+      <button class="mchip" id="m-paste">Paste</button>
+    </div>
+    <div class="paste" id="pastePane" hidden>
+      <textarea id="emails" spellcheck="false" placeholder="Paste messages, separated by a line of three dashes (---)"></textarea>
+    </div>
+
+    <div id="results"></div>
+    <div class="empty" id="empty">Tap the arrow below to brief your inbox.</div>
+    <div id="status"></div>
+
+    <div class="askbar">
+      <div class="lbl">Brief my latest
+        <select id="count"><option>5</option><option selected>10</option><option>20</option></select>
+        emails
+      </div>
+      <button class="go" id="run" aria-label="Run briefing">➜</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SAMPLES=[
+`From: Rhea Kapoor <partnerships@boat-lifestyle.com>
+Subject: Collab with boAt — paid Reel
+Hi! We love your tech content. boAt would like to offer ₹45,000 for 1 Instagram Reel + 2 Stories featuring our new Airdopes. Live by 20 Sept. We're a registered company, so we'll need a GST invoice.`,
+`From: Team Bewakoof <creators@bewakoof.com>
+Subject: Quick paid post
+Hey! Would you do 1 Reel for our festive drop? Budget is ₹18,000, flexible on the date.`,
+`From: Dot & Key <influencer@dotandkey.com>
+Subject: Barter collab
+Hi! We'd send our full serum range (worth ~₹25,000) for 2 Stories + 1 static post. No cash, pure barter. Registered brand, can raise a GST invoice.`,
+`From: Aditya <aditya.films@gmail.com>
+Subject: Joint video?
+Want to shoot a collab YouTube video next week — split across both channels? No money, just cross-promo.`,
+`From: The Creator Collective <hello@creatorcollective.in>
+Subject: Join our community
+We run a group of 200+ creators who cross-promote. No fees, no fixed deliverables.`,
+`From: Accounts, Mamaearth <finance@mamaearth.in>
+Subject: Invoice #INV-204
+Reminder: Invoice #INV-204 for ₹22,000 is unpaid and 18 days past the due date of 19 Aug 2025.`,
+`From: Sugar Cosmetics <payments@sugarcosmetics.com>
+Subject: Payment processed
+Your payment of ₹32,000 for the July campaign (Invoice #SC-118) has been credited today.`,
+`From: Lucky Draw <noreply@claim-prize-now.xyz>
+Subject: YOU WON ₹10,00,000!!!
+Click the link and share your bank details to claim your prize NOW!!!`,
+`From: GrowFast Media <promo@growfast-followers.com>
+Subject: 50,000 followers this month
+Boost your Instagram FAST! 10x growth. 70% OFF today only.`,
+`From: Meera <meera.styles@gmail.com>
+Subject: love your work!
+your content is so good, we should do something together sometime!! big fan.`];
+const DEMO={results:[
+{scanner:{sender:"boAt",category:"Sponsorship Offer",summary:"boAt — ₹45k for 1 Reel + 2 Stories by 20 Sep."},extractor:{brand_name:"boAt",offer_amount:"₹45,000 INR",deliverable:"1 Reel + 2 Stories",deadline:"2025-09-20",gst_invoice_needed:true,tds_flag:true}},
+{scanner:{sender:"Bewakoof",category:"Sponsorship Offer",summary:"Bewakoof — ₹18k for 1 Reel, festive drop."},extractor:{brand_name:"Bewakoof",offer_amount:"₹18,000 INR",deliverable:"1 Reel",deadline:"not specified",gst_invoice_needed:true,tds_flag:false}},
+{scanner:{sender:"Dot & Key",category:"Collab Request",summary:"Dot & Key — barter ₹25k for 2 Stories + 1 post."},extractor:{brand_name:"Dot & Key",offer_amount:"₹25,000 INR (barter)",deliverable:"2 Stories + 1 post",deadline:"not specified",gst_invoice_needed:true,tds_flag:false}},
+{scanner:{sender:"Aditya",category:"Collab Request",summary:"Aditya — joint YouTube video, no money."},extractor:{brand_name:"Aditya",deliverable:"Joint YouTube video",deadline:"next week"}},
+{scanner:{sender:"The Creator Collective",category:"Collab Request",summary:"Community cross-promo, no fee."},extractor:{brand_name:"The Creator Collective",deliverable:"Cross-promotion"}},
+{scanner:{sender:"Mamaearth",category:"Invoice/Payment",summary:"Invoice #INV-204 ₹22k — 18 days overdue."},extractor:{brand_name:"Mamaearth",amount:"₹22,000",due_date:"2025-08-19",status:"overdue"}},
+{scanner:{sender:"Sugar Cosmetics",category:"Invoice/Payment",summary:"₹32k credited — Invoice #SC-118."},extractor:{brand_name:"Sugar Cosmetics",amount:"₹32,000",status:"paid"}},
+{scanner:{sender:"claim-prize-now.xyz",category:"Spam/Low-value",summary:"Fake lottery prize asking for bank details."}},
+{scanner:{sender:"GrowFast Media",category:"Spam/Low-value",summary:"Follower-growth promo blast."}},
+{scanner:{sender:"Meera",category:"Other",summary:"Fan message — no brand or deliverable."}}],
+briefing:`🔴 Needs your reply
+- boAt: ₹45k for Reel + 2 Stories — accept, GST invoice ready.
+- Bewakoof: ₹18k for a Reel — confirm and lock a date.
+- Dot & Key: barter (~₹25k) for 3 posts — reply if barter works.
+
+🟢 Handled automatically
+- Sugar payment ₹32k received — Invoice #SC-118 marked paid.
+- Deadline added: boAt Reel live by 20 Sep.
+
+🟡 Only you can decide
+- Mamaearth ₹22k overdue 18 days — chase or escalate?
+- Aditya joint YouTube collab — worth your time?`};
+
+const $=(s)=>document.querySelector(s);
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sleep=(ms)=>new Promise(r=>setTimeout(r,RM?0:ms));
+const esc=(s)=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KIND={"Sponsorship Offer":["spon","SPONSOR"],"Collab Request":["collab","COLLAB"],"Invoice/Payment":["inv","INVOICE"],"Spam/Low-value":["spam","NOISE"],"Other":["other","OTHER"]};
+const amt=(s)=>{const m=String(s||"").replace(/[, ]/g,"").match(/₹?(\d+(?:\.\d+)?)/);return m?Math.round(parseFloat(m[1])):0;};
+const inr=(n)=>"₹"+n.toLocaleString("en-IN");
+
+$("#date").textContent="📅 "+new Date().toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
+let demo=true; const demoEl=$("#demo");
+function setDemo(v){demo=v;demoEl.setAttribute("aria-checked",String(v));}
+demoEl.onclick=()=>setDemo(!demo);
+demoEl.onkeydown=(e)=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();setDemo(!demo);}};
+
+let source="gmail";
+function setSource(s){source=s;$("#m-gmail").classList.toggle("on",s==="gmail");$("#m-paste").classList.toggle("on",s==="paste");$("#pastePane").hidden=s!=="paste";if(s==="paste"&&!$("#emails").value)$("#emails").value=SAMPLES.join("\n---\n");}
+$("#m-gmail").onclick=()=>setSource("gmail");$("#m-paste").onclick=()=>setSource("paste");
+
+let filter="all";
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");filter=t.dataset.key;applyFilter();});
+function applyFilter(){document.querySelectorAll(".msg").forEach(m=>{m.style.display=(filter==="all"||m.dataset.cat===filter)?"":"none";});const list=$("#msglist");if(list){const any=[...document.querySelectorAll(".msg")].some(m=>m.style.display!=="none");let e=$("#nofilter");if(!any){if(!e){e=document.createElement("div");e.id="nofilter";e.className="empty";e.textContent="Nothing in this bucket.";list.appendChild(e);}}else if(e)e.remove();}}
+
+const splitEmails=(t)=>t.split(/\n\s*---\s*\n/).map(s=>s.trim()).filter(Boolean);
+
+function briefSections(text){const map={"🔴":"red","🟢":"green","🟡":"amber"};const secs=[];let cur=null;String(text).split("\n").forEach(ln=>{const k=Object.keys(map).find(e=>ln.trim().startsWith(e));if(k){cur={cls:map[k],title:ln.replace(k,"").trim(),items:[]};secs.push(cur);}else if(cur&&/^\s*[-•]/.test(ln))cur.items.push(ln.replace(/^\s*[-•]\s?/,"").trim());});return secs;}
+
+async function reveal(data){
+  const results=data.results||[], briefing=data.briefing||"";
+  const deals=results.filter(r=>r.extractor&&["Sponsorship Offer","Collab Request"].includes(r.scanner?.category));
+  const money=deals.reduce((s,r)=>s+amt(r.extractor.offer_amount),0);
+  $("#greet").textContent="Good morning, Divya!";
+  $("#subline").textContent=`${results.length} messages sorted · ${deals.length} deals worth ${inr(money)} · nothing slipped.`;
+  $("#empty").style.display="none";
+  const R=$("#results"); R.innerHTML="";
+  const secs=briefSections(briefing);
+  const clsPill={red:"",green:"",amber:""};
+  // briefing cards
+  for(const s of secs){
+    const lab=document.createElement("div"); lab.className="seclabel "+s.cls;
+    lab.innerHTML='<span class="cd"></span><span>'+esc(s.title)+'</span>'; R.appendChild(lab);
+    if(s.cls==="red"){
+      for(const it of s.items){
+        const c=document.createElement("div"); c.className="card";
+        c.innerHTML='<div class="r1"><div><div class="ttl">'+esc(it.split("—")[0].trim())+'</div><div class="meta">'+esc(it)+'</div></div></div>'+
+          '<div class="chips"><button class="chip primary">Accept &amp; reply</button><button class="chip ghost">Snooze</button></div>';
+        R.appendChild(c); requestAnimationFrame(()=>c.classList.add("in"));
+        const [prim,snz]=c.querySelectorAll(".chip");
+        prim.onclick=()=>{c.classList.add("gone");prim.textContent="Reply drafted ✓";prim.disabled=true;};
+        snz.onclick=()=>{c.classList.add("gone");snz.textContent="Snoozed";snz.disabled=true;};
+        await sleep(160);
+      }
+    } else {
+      const c=document.createElement("div"); c.className="flatcard card";
+      c.innerHTML=s.items.map(it=>'<div class="li"><i>'+(s.cls==="green"?"✅":"🟡")+'</i><span>'+esc(it)+'</span></div>').join("");
+      R.appendChild(c); requestAnimationFrame(()=>c.classList.add("in")); await sleep(140);
+    }
+  }
+  // sorted list
+  const lw=document.createElement("div"); lw.className="listwrap";
+  lw.innerHTML='<h3>Your inbox, sorted</h3><div id="msglist"></div>'; R.appendChild(lw);
+  const ml=lw.querySelector("#msglist");
+  results.forEach(r=>{const sc=r.scanner||{},cat=sc.category||"Other",[k,label]=KIND[cat]||["other","OTHER"];
+    ml.insertAdjacentHTML("beforeend",'<div class="msg" data-cat="'+esc(cat)+'"><div class="r1"><span class="who">'+esc(sc.sender||"Unknown")+'</span><span class="pill p-'+k+'">'+label+'</span></div><div class="sm">'+esc(sc.summary||"—")+'</div></div>');});
+  applyFilter();
+  $("#status").textContent=demo?"Demo briefing — switch Demo off to run Claude live.":"Briefing ready — "+results.length+" messages.";
+}
+
+$("#run").onclick=async()=>{
+  $("#status").className=""; $("#run").disabled=true;
+  try{
+    let data;
+    if(demo){$("#status").innerHTML='<span class="spin"></span>Briefing your inbox…';await sleep(700);data=DEMO;}
+    else if(source==="gmail"){$("#status").innerHTML='<span class="spin"></span>Fetching your inbox…';const res=await fetch("/api/briefit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({source:"gmail",count:+$("#count").value})});data=await res.json();if(!res.ok)throw new Error(data.error||("HTTP "+res.status));}
+    else{const emails=splitEmails($("#emails").value);if(!emails.length){$("#status").className="err";$("#status").textContent="Paste a message first.";$("#run").disabled=false;return;}$("#status").innerHTML='<span class="spin"></span>Running Claude…';const res=await fetch("/api/briefit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({emails})});data=await res.json();if(!res.ok)throw new Error(data.error||("HTTP "+res.status));}
+    await reveal(data);
+  }catch(e){$("#status").className="err";$("#status").textContent="Error: "+e.message+". Turn Demo on to run locally.";}
+  finally{$("#run").disabled=false;}
+};
+</script>
+</body>
+</html>
